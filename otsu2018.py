@@ -462,7 +462,7 @@ class Clustering:
             if node.leaf:
                 return node
 
-            if xy[node.split_x_or_y] >= node.split_axis:
+            if xy[node.split_x_or_y] <= node.split_a1xis:
                 return search(node.children[0])
             else:
                 return search(node.children[1])
