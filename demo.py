@@ -8,7 +8,7 @@ from otsu2018 import load_Otsu2018_spectra, Clustering
 
 if __name__ == '__main__':
     print('Loading spectral data...')
-    sds = load_Otsu2018_spectra('CommonData/spectrum_m.csv', every_nth=10)
+    sds = load_Otsu2018_spectra('CommonData/spectrum_m.csv', every_nth=50)
     shape = SpectralShape(380, 730, 10)
 
     print('Initializing the clustering...')
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     print('Clustering...')
     before = clustering.root.total_reconstruction_error()
-    clustering.do_best_splits(8)
+    clustering.optimise(2)
     after = clustering.root.total_reconstruction_error()
 
     print('Error before: %g' % before)
