@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import tqdm
+import time
 
 from colour import (SpectralDistribution, STANDARD_OBSERVER_CMFS,
                     ILLUMINANT_SDS, sd_to_XYZ, XYZ_to_xy)
@@ -55,7 +57,7 @@ class PartitionAxis:
         self.direction = direction
 
     def __str__(self):
-        return '%s = %g' % ('yx'[self.direction], self.origin)
+        return '%s=%s' % ('yx'[self.direction], repr(self.origin))
 
 
 class Colours:
@@ -351,9 +353,11 @@ class Node:
         """
 
         if self.best_partition is not None:
+            print('%s: already optimised' % self)
             return self.best_partition
 
         best_error = None
+        bar = tqdm.trange(2 * len(self.colours), leave=False)
 
         for direction in [0, 1]:
             for i in range(len(self.colours)):
@@ -369,7 +373,9 @@ class Node:
                     self.best_partition = (error, axis, partition)
 
                 delta = error - self.reconstruction_error()
-                print('%10s  %3d %10s %g' % (self, i, axis, delta))
+                bar.update()
+
+        bar.close()
 
         if self.best_partition is None:
             raise ClusteringError('no partitions are possible')
@@ -511,15 +517,25 @@ class Clustering:
             Maximum number of splits. If the dataset is too small, this number
             might not be reached.
         """
+
+        t0 = time.time()
+        def elapsed():
+            delta = time.time() - t0
+            return '%dm%.3fs' % (delta // 60, delta % 60)
+
         for repeat in range(repeats):
+            print('=== Iteration %d of %d ===' % (repeat + 1, repeats))
+
             best_total_error = None
             total_error = self.root.total_reconstruction_error()
 
-            for leaf in self.root.leaves:
+            for i, leaf in enumerate(self.root.leaves):
+                print('(%s) Optimising %s...' % (elapsed(), leaf))
+
                 try:
                     error, axis, partition = leaf.find_best_partition()
                 except ClusteringError:
-                    print('%s has no partitions' % leaf)
+                    print('...no partitions are possible.')
                     continue
 
                 new_total_error = (total_error - leaf.reconstruction_error()
@@ -532,11 +548,14 @@ class Clustering:
                     best_partition = partition
 
             if best_total_error is None:
-                print('WARNING: only %d splits were possible' % repeat)
+                print('WARNING: only %d splits were possible.' % repeat)
                 break
 
-            print('==== Splitting %s along %s ====' % (best_leaf, best_axis))
+            print('\nSplit %s into %s and %s along %s.\n'
+                  % (best_leaf, *best_partition, best_axis))
             best_leaf.split(best_partition, best_axis)
+
+        print('Finished in %s.' % elapsed())
 
     def write_python_dataset(self, path):
         """

@@ -1,5 +1,6 @@
 import os
 import matplotlib.pyplot as plt
+
 from colour import (
     SpectralShape, COLOURCHECKER_SDS, ILLUMINANT_SDS, sd_to_XYZ)
 
@@ -8,7 +9,7 @@ from otsu2018 import load_Otsu2018_spectra, Clustering
 
 if __name__ == '__main__':
     print('Loading spectral data...')
-    sds = load_Otsu2018_spectra('CommonData/spectrum_m.csv', every_nth=50)
+    sds = load_Otsu2018_spectra('CommonData/spectrum_m.csv', every_nth=1)
     shape = SpectralShape(380, 730, 10)
 
     print('Initializing the clustering...')
@@ -16,7 +17,7 @@ if __name__ == '__main__':
 
     print('Clustering...')
     before = clustering.root.total_reconstruction_error()
-    clustering.optimise(2)
+    clustering.optimise(8)
     after = clustering.root.total_reconstruction_error()
 
     print('Error before: %g' % before)
