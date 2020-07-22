@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     print('Clustering...')
     before = clustering.root.total_reconstruction_error()
-    clustering.optimise(8)
+    clustering.optimise()
     after = clustering.root.total_reconstruction_error()
 
     print('Error before: %g' % before)
