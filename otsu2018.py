@@ -223,14 +223,11 @@ class Node:
         if not self.leaf:
             raise RuntimeError('Node.PCA called for a node that is not a leaf')
 
-        # https://dev.to/akaame/implementing-simple-pca-using-numpy-3k0a
         self.mean = np.mean(self.colours.reflectances, axis=0)
-        data = self.colours.reflectances - self.mean
-        cov = np.cov(data.T) / data.shape[0]
-        v, w = np.linalg.eig(cov)
-        idx = v.argsort()[::-1]
-        w = w[:, idx]
-        self.basis_functions = np.real(w[:, :3].T)
+        data_matrix = self.colours.reflectances - self.mean
+        covariance_matrix = np.dot(data_matrix.T, data_matrix)
+        _eigenvalues, eigenvectors = np.linalg.eigh(covariance_matrix)
+        self.basis_functions = eigenvectors[:, -3:].T
 
         # TODO: better names
         M = np.empty((3, 3))
