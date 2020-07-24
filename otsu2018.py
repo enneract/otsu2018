@@ -4,7 +4,7 @@ import tqdm
 import time
 
 from colour import (SpectralDistribution, STANDARD_OBSERVER_CMFS,
-                    ILLUMINANT_SDS, sd_to_XYZ, XYZ_to_xy)
+                    sd_ones, sd_to_XYZ, XYZ_to_xy)
 from colour.plotting import plot_chromaticity_diagram_CIE1931
 
 
@@ -450,7 +450,7 @@ class Clustering:
             sds,
             shape,
             cmfs=STANDARD_OBSERVER_CMFS['CIE 1931 2 Degree Standard Observer'],
-            illuminant=ILLUMINANT_SDS['D65']):
+            illuminant=sd_ones()):
         """
         Parameters
         ----------

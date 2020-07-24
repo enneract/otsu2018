@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
         plt.plot(sd.wavelengths, sd.values, label='Original')
 
-        XYZ = sd_to_XYZ(sd, illuminant=ILLUMINANT_SDS['D65']) / 100
+        XYZ = sd_to_XYZ(sd) / 100
         recovered_sd = clustering.reconstruct(XYZ)
         plt.plot(recovered_sd.wavelengths, recovered_sd.values,
                  label='Recovered')
