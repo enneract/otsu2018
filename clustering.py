@@ -4,16 +4,16 @@ import tqdm
 
 from colour import SpectralShape, COLOURCHECKER_SDS, sd_to_XYZ
 
-from otsu2018 import load_Otsu2018_spectra, Tree
+from otsu2018 import load_Otsu2018_spectra, Otsu2018Tree
 
 
 if __name__ == '__main__':
     print('Loading spectral data...')
-    sds = load_Otsu2018_spectra('CommonData/spectrum_m.csv', every_nth=50)
+    sds = load_Otsu2018_spectra('CommonData/spectrum_m.csv', every_nth=7)
     shape = SpectralShape(380, 730, 10)
 
     print('Initializing the tree...')
-    tree = Tree(sds, shape)
+    tree = Otsu2018Tree(sds, shape)
 
     print('Clustering...')
     before = tree.total_reconstruction_error()
@@ -25,7 +25,9 @@ if __name__ == '__main__':
 
     print('Saving the dataset...')
     os.makedirs('datasets', exist_ok=True)
-    tree.write_python_dataset('datasets/otsu2018.py')
+    data = tree.to_dataset()
+    data.to_file('datasets/otsu2018.npz')
+    data.to_Python_file('datasets/otsu2018.py')
 
     print('Plotting...')
     tree.visualise()
@@ -50,3 +52,4 @@ if __name__ == '__main__':
             break
 
     plt.show()
+
