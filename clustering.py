@@ -9,7 +9,7 @@ from otsu2018 import load_Otsu2018_spectra, Otsu2018Tree
 
 if __name__ == '__main__':
     print('Loading spectral data...')
-    sds = load_Otsu2018_spectra('CommonData/spectrum_m.csv', every_nth=7)
+    sds = load_Otsu2018_spectra('CommonData/spectrum_m.csv', every_nth=100)
     shape = SpectralShape(380, 730, 10)
 
     print('Initializing the tree...')
@@ -23,8 +23,9 @@ if __name__ == '__main__':
     print('Error before: %g' % before)
     print('Error after:  %g' % after)
 
-    print('Saving the dataset...')
-    os.makedirs('datasets', exist_ok=True)
+    print('Saving the dataset...')    
+    if not os.path.exists('datasets'):
+        os.makedirs('datasets')
     data = tree.to_dataset()
     data.to_file('datasets/otsu2018.npz')
     data.to_Python_file('datasets/otsu2018.py')
